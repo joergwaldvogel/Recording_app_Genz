@@ -1,31 +1,52 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# --------------------------------------------------------------------
+# Capacitor-Plattform-Artefakte
+# --------------------------------------------------------------------
+ios/
+android/
+electron/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Falls du das Xcode-Projekt doch versionieren willst,
+# dann wenigstens die riesigen Build-Ordner ignorieren:
+ios/**/build/
+ios/**/Pods/
 
-# testing
-/coverage
+# Capacitor synchronisiert die Web-Assets hierhin
+# (wird aus /src bzw. /dist generiert)
+www/
 
-# production
-/dist
+# Vite / Ionic CLI Build-Output (falls du statt www -> dist nutzt)
+dist/
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-/.nx
-/.nx/cache
-/.vscode/*
-!/.vscode/extensions.json
-.idea
+# --------------------------------------------------------------------
+# Tool-Zwischenstände
+# --------------------------------------------------------------------
+# Gradle
+*.iml
+.gradle/
+android/.gradle/
+android/app/build/
+gradle/
 
+# CocoaPods
+Pods/
+podfile.lock
+
+# Android Studio / Xcode Arbeits­dateien
+.idea/
+.vscode/
+*.xcworkspace
+*.xcuserstate
+*.xcuserdata/
+
+# --------------------------------------------------------------------
+# Sonstiges
+# --------------------------------------------------------------------
+# Logcat-, Crash- oder npm-Logfiles
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Optional eslint cache
-.eslintcache
+# von Capacitor / Ionic generierte config-Backups
+capacitor.config.ts.backup*
+capacitor.config.json.backup*
+node_modules
