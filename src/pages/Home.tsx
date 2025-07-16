@@ -1,25 +1,59 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import './Home.css';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  IonPage, IonHeader, IonToolbar, IonTitle,
+  IonContent, IonList, IonItem, IonLabel, IonButton,
+} from '@ionic/react';
 
-const Home: React.FC = () => {
+import { RecordingService } from '../service/recording.service';
+import RecordButton from '../components/RecordButton';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+
+import type { Recording } from '../service/types';
+import { playRecording } from '../service/audio-play';
+
+export default function Home() {
+  const [recs, setRecs] = useState<Recording[]>([]);
+
+  /** Liste neu laden */
+  const refresh = useCallback(async () => {
+    setRecs(await RecordingService.list());
+  }, []);
+
+  useEffect(() => { refresh(); }, [refresh]);
+
+  /* ── Aktionen pro Eintrag ───────────────────────── */
+  const play  = useCallback(async (rec: Recording) => {
+    const { uri } = await Filesystem.getUri({ path: rec.filePath, directory: Directory.Data });
+    await playRecording(uri, rec.id);
+  }, []);
+
+  const share = (rec: Recording) => RecordingService.share(rec);
+  const remove = async (rec: Recording) => { await RecordingService.delete(rec); refresh(); };
+
+  /* ── UI ─────────────────────────────────────────── */
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>Blank</IonTitle>
+        <IonToolbar color="primary">
+          <IonTitle>Aufnahmen</IonTitle>
         </IonToolbar>
       </IonHeader>
+
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Blank</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <ExploreContainer />
+        <IonList inset>
+          {recs.map(rec => (
+            <IonItem key={rec.id}>
+              <IonLabel>{rec.fileName}</IonLabel>
+
+              <IonButton slot="end" onClick={() => play(rec)}>▶️</IonButton>
+              <IonButton slot="end" onClick={() => share(rec)}>📤</IonButton>
+              <IonButton slot="end" color="danger" onClick={() => remove(rec)}>🗑️</IonButton>
+            </IonItem>
+          ))}
+        </IonList>
+
+        <RecordButton onFinished={refresh} />
       </IonContent>
     </IonPage>
   );
-};
-
-export default Home;
+}
