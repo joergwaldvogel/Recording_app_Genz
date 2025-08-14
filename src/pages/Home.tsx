@@ -29,6 +29,8 @@ import {
   trashOutline,
 } from 'ionicons/icons';
 
+import logo from '/assets/icon/logo.png'; // aus public/
+
 export default function Home() {
   const [recs, setRecs] = useState<Recording[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -95,11 +97,15 @@ export default function Home() {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="primary">
+        <IonToolbar color="primary" style={{ '--background': '#D61B2B', '--color': 'white' }}>
           <IonTitle>Aufnahmen</IonTitle>
+          <IonButtons slot="end">
+            <IonButton fill="clear" aria-label="App-Logo">
+              <img src="/assets/icon/logo.png" alt="Logo" style={{ width: 36, height: 36 }} />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
-
       <IonContent fullscreen>
         <IonList inset>
           {recs.map((rec) => {
