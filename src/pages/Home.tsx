@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle,
   IonContent, IonList, IonItem, IonLabel,
-  IonButton, IonButtons, IonIcon,
+  IonButton, IonButtons, IonIcon, IonAlert,
 } from '@ionic/react';
 
 import { Directory, Filesystem } from '@capacitor/filesystem';
@@ -29,13 +29,19 @@ import {
   trashOutline,
 } from 'ionicons/icons';
 
-import logo from '/assets/icon/logo.png'; // aus public/
+import logo from '/assets/icon/logo.png'; // Bild aus public/
 
 export default function Home() {
   const [recs, setRecs] = useState<Recording[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   // kleiner Re-Render-Trigger, wenn der NativeAudio-State wechselt
   const [, setBump] = useState(0);
+
+  // Alert-State für Bestätigung
+  const [confirm, setConfirm] = useState<{ open: boolean; rec: Recording | null }>({
+    open: false,
+    rec: null,
+  });
 
   /** Liste neu laden */
   const refresh = useCallback(async () => {
@@ -83,29 +89,33 @@ export default function Home() {
     setBump((n) => n + 1);
   }, [activeId]);
 
-  /** Teilen / Löschen */
+  /** Teilen */
   const share = (rec: Recording) => RecordingService.share(rec);
 
-  const remove = async (rec: Recording) => {
+  /** Tatsächliches Löschen nach Bestätigung */
+  const doDelete = async () => {
+    if (!confirm.rec) return;
     // Sicherheitshalber stoppen, falls sie gerade läuft
-    stopRecording(rec.id);
-    await RecordingService.delete(rec);
+    stopRecording(confirm.rec.id);
+    await RecordingService.delete(confirm.rec);
     await refresh();
+    setConfirm({ open: false, rec: null });
   };
 
   /* ── UI ─────────────────────────────────────────── */
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="primary" style={{ '--background': '#D61B2B', '--color': 'white' }}>
+        <IonToolbar style={{ '--background': 'var(--ion-color-danger)', '--color': 'white' }}>
           <IonTitle>Aufnahmen</IonTitle>
           <IonButtons slot="end">
             <IonButton fill="clear" aria-label="App-Logo">
-              <img src="/assets/icon/logo.png" alt="Logo" style={{ width: 36, height: 36 }} />
+              <img src={logo} alt="Logo" style={{ width: 36, height: 36 }} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
+
       <IonContent fullscreen>
         <IonList inset>
           {recs.map((rec) => {
@@ -153,12 +163,12 @@ export default function Home() {
                     <IonIcon icon={shareOutline} />
                   </IonButton>
 
-                  {/* Löschen */}
+                  {/* Löschen (mit Bestätigung) */}
                   <IonButton
                     mode="ios"
                     fill="clear"
                     color="danger"
-                    onClick={() => remove(rec)}
+                    onClick={() => setConfirm({ open: true, rec })}
                     aria-label="Löschen"
                     className="icon-btn"
                   >
@@ -172,6 +182,18 @@ export default function Home() {
 
         <RecordButton onFinished={refresh} />
       </IonContent>
+
+      {/* Bestätigungs-Popup */}
+      <IonAlert
+        isOpen={confirm.open}
+        header="Aufnahme löschen?"
+        message={`„${confirm.rec?.fileName ?? ''}“ wirklich löschen?`}
+        onDidDismiss={() => setConfirm({ open: false, rec: null })}
+        buttons={[
+          { text: 'Abbrechen', role: 'cancel' },
+          { text: 'Löschen', role: 'destructive', handler: () => { void doDelete(); } },
+        ]}
+      />
 
       {/* CSS entweder hier oder auslagern */}
       <style>{`
