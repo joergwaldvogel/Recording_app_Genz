@@ -82,38 +82,3 @@ cd android
 ```
 
 Sign & upload the APK/AAB via the Play Console as usual.
-
----
-
-## 6. Git workflow
-
-```bash
-# add new files (e.g. README)
-git add README.md
-
-# commit changes
-git commit -m "docs: add readme"
-
-# pull remote changes in case someone else pushed
-git pull --rebase origin main
-
-# push to GitHub
-git push origin main
-```
-
----
-
-## 7. Troubleshooting
-
-| Issue | Fix |
-|-------|-----|
-| `error: failed to push some refs` | `git pull --rebase origin main` before pushing |
-| No audio in emulator | Emulator > *Settings → Microphone* → enable |
-| `MediaRecorder went away with unhandled events` | Make sure you call `stopRecording()` and release resources |
-| `Audio Asset already exists` | Call `NativeAudio.unload()` after playback (already implemented) |
-
----
-
-### License
-
-MIT © 2025 Joerg Waldvogel
