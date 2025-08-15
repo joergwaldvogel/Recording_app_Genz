@@ -2,7 +2,6 @@
 # Capacitor-Plattform-Artefakte
 # --------------------------------------------------------------------
 ios/
-android/
 electron/
 
 # Falls du das Xcode-Projekt doch versionieren willst,

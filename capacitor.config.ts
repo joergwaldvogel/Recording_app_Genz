@@ -1,9 +1,12 @@
-import type { CapacitorConfig } from '@capacitor/cli';
-
-const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'audio-recorder',
-  webDir: 'dist'
+const config = {
+  appId: 'DEINE.PACKAGE.ID',
+  appName: 'Audio-Recorder',
+  webDir: 'dist',
+  plugins: {
+    StatusBar: {
+      overlays: false,   // <— WICHTIG
+      style: 'LIGHT',    // weiße Symbole
+    },
+  },
 };
-
 export default config;
