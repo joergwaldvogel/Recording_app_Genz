@@ -25,6 +25,13 @@ A simple Ionic/Capacitor app for recording, listing, and playing back audio on A
 git clone https://github.com/joergwaldvogel/Recording_app_Genz.git
 cd Recording_app_Genz
 npm install
+optional (wenn Plugin nicht erkannt)
+npm install @capawesome-team/capacitor-audio-recorder
+
+```bash
+Lizenzschlüssel einrichten für Audio-Recorder Plugin:
+npm config set @capawesome-team:registry https://npm.registry.capawesome.io/
+npm config set //npm.registry.capawesome.io/:_authToken <DEIN_LIZENZSCHLÜSSEL>
 ```
 
 ---
@@ -50,6 +57,7 @@ ionic serve
 Add the Android platform and sync:
 
 ```bash
+npm run build
 npx cap add android   # only once
 npx cap sync android
 ```
