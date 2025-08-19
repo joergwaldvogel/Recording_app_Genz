@@ -69,7 +69,7 @@ npx cap open android
 ```
 
 In Android Studio:
-- Select an **emulator** or **physical device**
+- Select an **emulator** or **physical device** (please use Google Pixel 7)
 - Click **Run ▶️**
 
 ---
